@@ -168,6 +168,7 @@ function addPredicateFields(mixinOptions, ctx) {
 
 function cleanPredicateFields(ctx, modelInstance) {
     return function(finalCb) {
+        console.log("CTX KEYS", Object.keys(ctx));
 
         if (!Array.isArray(ctx.req.dirtyFields) || !ctx.result) {
             return finalCb();
@@ -179,7 +180,7 @@ function cleanPredicateFields(ctx, modelInstance) {
             ctx.result.forEach(function (result) {
                 var replacement = {};
                 for (var key in result["__data"]) {
-                    if (ctx.req.dirtyFields.indexOf(key) === -1) {
+                    if (ctx.where[key] || ctx.req.dirtyFields.indexOf(key) === -1) {
                         replacement[key] = result["__data"][key];
                     }
                 }
