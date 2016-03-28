@@ -185,7 +185,7 @@ function cleanPredicateFields(ctx, modelInstance) {
                 var replacement = {};
                 for (var key in result["__data"]) {
 
-                    if(isDirty(ctx, filter)) {
+                    if(isDirty(ctx, filter, key)) {
                         continue;
                     }
 
@@ -197,7 +197,7 @@ function cleanPredicateFields(ctx, modelInstance) {
             answer = {};
             for (var key in ctx.result["__data"]) {
 
-                if(isDirty(ctx, filter)) {
+                if(isDirty(ctx, filter, key)) {
                     continue;
                 }
 
@@ -210,7 +210,7 @@ function cleanPredicateFields(ctx, modelInstance) {
     }
 };
 
-function isDirty(ctx, filter) {
+function isDirty(ctx, filter, key) {
     if(Array.isArray(filter.fields)
         && (filter.fields.indexOf(key) !== -1
         || ctx.req.dirtyFields.indexOf(key) !== -1)) {
@@ -218,7 +218,6 @@ function isDirty(ctx, filter) {
     } else if(typeof filter.fields === "object"
         && (!filter.fields[key]
         || ctx.req.dirtyFields.indexOf(key) !== -1)) {
-        console.log("cleaning out", key);
         return true;
     }
 
