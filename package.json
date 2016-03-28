@@ -1,0 +1,26 @@
+{
+  "name": "loopback-filter-mixin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nxtlvlgg/loopback-filter-mixin.git"
+  },
+  "author": "Josh Elias",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nxtlvlgg/loopback-filter-mixin/issues"
+  },
+  "homepage": "https://github.com/nxtlvlgg/loopback-filter-mixin#readme",
+  "mixinName": "Filter",
+  "dependencies": {
+    "async": "^2.0.0-rc.2",
+    "loopback": "^2.27.0",
+    "underscore": "^1.8.3",
+    "xloop": "git://github.com/nxtlvlgg/xloop.git"
+  }
+}
