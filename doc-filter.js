@@ -71,7 +71,6 @@ function filterResults(ctx, mixinOptions, finalCb) {
             ctx.req,
             {modelClass: ctx.Model.definition.name, modelId: result.id},
             function (err, isInRoles) {
-                console.log("isInRoles", isInRoles);
                 if(err) return resultCb(err);
                 if(!isInRoles.none) {
                     answer.push(result);
@@ -168,10 +167,15 @@ function addPredicateFields(mixinOptions, ctx) {
 
 function cleanPredicateFields(ctx, modelInstance) {
     return function(finalCb) {
-        console.log("CTX KEYS", Object.keys(ctx));
 
         if (!Array.isArray(ctx.req.dirtyFields) || !ctx.result) {
             return finalCb();
+        }
+
+        // Parse filter from query string
+        var filter = {};
+        if(typeof ctx.args.filter === "string") {
+            filter = JSON.parse(ctx.args.filter);
         }
 
         var answer;
@@ -180,9 +184,20 @@ function cleanPredicateFields(ctx, modelInstance) {
             ctx.result.forEach(function (result) {
                 var replacement = {};
                 for (var key in result["__data"]) {
-                    if (ctx.where[key] || ctx.req.dirtyFields.indexOf(key) === -1) {
-                        replacement[key] = result["__data"][key];
+
+                    // Are we filtering out this field
+                    if(Array.isArray(filter.fields)
+                        && (filter.fields.indexOf(key) !== -1
+                        || ctx.req.dirtyFields.indexOf(key) !== -1)) {
+                        continue;
+                    } else if(typeof filter.fields === "object"
+                        && (!filter.fields[key]
+                        || ctx.req.dirtyFields.indexOf(key) !== -1)) {
+                        continue;
                     }
+
+                    // Else add the field
+                    replacement[key] = result["__data"][key];
                 }
                 answer.push(replacement);
             });
