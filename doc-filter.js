@@ -185,18 +185,10 @@ function cleanPredicateFields(ctx, modelInstance) {
                 var replacement = {};
                 for (var key in result["__data"]) {
 
-                    // Are we filtering out this field
-                    if(Array.isArray(filter.fields)
-                        && (filter.fields.indexOf(key) !== -1
-                        || ctx.req.dirtyFields.indexOf(key) !== -1)) {
-                        continue;
-                    } else if(typeof filter.fields === "object"
-                        && (!filter.fields[key]
-                        || ctx.req.dirtyFields.indexOf(key) !== -1)) {
+                    if(isDirty(ctx, filter)) {
                         continue;
                     }
 
-                    // Else add the field
                     replacement[key] = result["__data"][key];
                 }
                 answer.push(replacement);
@@ -204,9 +196,12 @@ function cleanPredicateFields(ctx, modelInstance) {
         } else {
             answer = {};
             for (var key in ctx.result["__data"]) {
-                if (ctx.req.dirtyFields.indexOf(key) === -1) {
-                    answer[key] = ctx.result["__data"][key];
+
+                if(isDirty(ctx, filter)) {
+                    continue;
                 }
+
+                answer[key] = ctx.result["__data"][key];
             }
         }
         ctx.result = answer;
@@ -214,6 +209,21 @@ function cleanPredicateFields(ctx, modelInstance) {
         return finalCb();
     }
 };
+
+function isDirty(ctx, filter) {
+    if(Array.isArray(filter.fields)
+        && (filter.fields.indexOf(key) !== -1
+        || ctx.req.dirtyFields.indexOf(key) !== -1)) {
+        return true;
+    } else if(typeof filter.fields === "object"
+        && (!filter.fields[key]
+        || ctx.req.dirtyFields.indexOf(key) !== -1)) {
+        console.log("cleaning out", key);
+        return true;
+    }
+
+    return false;
+}
 
 
 module.exports = {
