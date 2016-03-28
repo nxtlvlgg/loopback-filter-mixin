@@ -65,7 +65,7 @@ function filterResults(ctx, mixinOptions, finalCb) {
         }
         userId = ctx.req.accessToken.userId;
 
-        var User = app.models.user;
+        var User = ctx.Model.app.models.user;
         return User.isInRoles(userId,
             mixinOptions.acceptedRoles,
             ctx.req,
