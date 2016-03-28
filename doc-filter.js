@@ -1,6 +1,4 @@
-var loopback = require("loopback");
 var async = require("async");
-var _ = require("underscore");
 var packageJSON = require("./package");
 var predicates = require("./predicates");
 
@@ -46,7 +44,7 @@ function filterDocs(Model, mixinOptions, ctx, modelInstance) {
             return filterResult(ctx, mixinOptions, finalCb);
         }
     }
-};
+}
 
 function filterResults(ctx, mixinOptions, finalCb) {
     var answer = [];
@@ -59,7 +57,6 @@ function filterResults(ctx, mixinOptions, finalCb) {
             answer = ctx.result;
             return resultCb();
         }
-        console.log("did not pass", result);
 
         // Check for userId
         var userId;
@@ -74,6 +71,7 @@ function filterResults(ctx, mixinOptions, finalCb) {
             ctx.req,
             {modelClass: ctx.Model.definition.name, modelId: result.id},
             function (err, isInRoles) {
+                console.log("isInRoles", isInRoles);
                 if(err) return resultCb(err);
                 if(!isInRoles.none) {
                     answer.push(result);

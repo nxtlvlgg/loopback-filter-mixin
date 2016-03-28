@@ -1,6 +1,4 @@
-var loopback = require("loopback");
 var async = require("async");
-var _ = require("underscore");
 var docFilter =  require("./doc-filter");
 var fieldFilter =  require("./field-filter");
 var reqCache = require("xloop").reqCache;
