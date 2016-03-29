@@ -216,7 +216,7 @@ function isDirty(ctx, filter, key) {
         || ctx.req.dirtyFields.indexOf(key) !== -1)) {
         return true;
     } else if(typeof filter.fields === "object"
-        && (!filter.fields[key]
+        && (filter.fields[key] === false
         || ctx.req.dirtyFields.indexOf(key) !== -1)) {
         return true;
     }
