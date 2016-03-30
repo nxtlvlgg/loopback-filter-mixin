@@ -87,7 +87,7 @@ function isDirty(ctx, filter, key) {
         && (filter.fields.indexOf(key) === -1 || ctx.req.dirtyFields.indexOf(key) !== -1)) {
         return true;
     } else if((!Array.isArray(filter.fields) && typeof filter.fields === "object" && Object.keys(filter.fields).length > 0)
-        && (!filter.fields[key] || ctx.req.dirtyFields.indexOf(key) !== -1)) {
+        && (filter.fields[key] === false || ctx.req.dirtyFields.indexOf(key) !== -1)) {
         return true;
     }
 
