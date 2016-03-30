@@ -1,3 +1,4 @@
+var predicates = require("./predicates");
 
 
 function addPredicateFields(mixinOptions, ctx) {
