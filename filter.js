@@ -1,6 +1,7 @@
 var async = require("async");
 var docFilter =  require("./doc-filter");
 var fieldFilter =  require("./field-filter");
+var predicate = require("./predicate");
 var reqCache = require("xloop").reqCache;
 
 
@@ -17,7 +18,7 @@ module.exports = function(Model, mixinOptions) {
     Model.observe("access", function(ctx, next) {
         ctx.req = reqCache.getRequest();
         async.series([
-            docFilter.addPredicateFields(mixinOptions, ctx)
+            predicate.addPredicateFields(mixinOptions, ctx)
         ], next);
     });
 
@@ -32,9 +33,9 @@ module.exports = function(Model, mixinOptions) {
     // Run the filter middleware on after every remote request
     Model.afterRemote("**", function (ctx, modelInstance, next) {
         async.series([
-            docFilter.filter(Model, mixinOptions, ctx, modelInstance),
-            fieldFilter.filter(Model, mixinOptions, ctx, modelInstance),
-            docFilter.cleanPredicateFields(ctx, modelInstance)
+            docFilter(Model, mixinOptions, ctx, modelInstance),
+            fieldFilter(Model, mixinOptions, ctx, modelInstance),
+            predicate.cleanPredicateFields(ctx, modelInstance)
         ], next);
     });
 };

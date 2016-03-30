@@ -93,6 +93,4 @@ function filterHandler(state, mixinOptions, finalCb) {
 }
 
 
-module.exports = {
-    filter: filterFields
-};
+module.exports = filterFields;
