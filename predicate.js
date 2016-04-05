@@ -84,7 +84,7 @@ function cleanPredicateFields(ctx, modelInstance) {
 
 function isDirty(ctx, filter, key) {
     if((Array.isArray(filter.fields) && filter.fields.length > 0)
-        && (filter.fields.indexOf(key) === -1 || ctx.req.dirtyFields.indexOf(key) !== -1)) {
+        && (filter.fields.indexOf(key) === -1 && ctx.req.dirtyFields.indexOf(key) !== -1)) {
         return true;
     } else if((!Array.isArray(filter.fields) && typeof filter.fields === "object" && Object.keys(filter.fields).length > 0)
         && (filter.fields[key] === false || ctx.req.dirtyFields.indexOf(key) !== -1)) {
