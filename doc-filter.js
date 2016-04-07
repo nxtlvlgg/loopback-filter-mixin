@@ -111,7 +111,7 @@ function filterResult(ctx, mixinOptions, finalCb) {
                 var noModelErr = new Error('unable to find model');
                 noModelErr.statusCode = 404;
                 noModelErr.code = 'MODEL_NOT_FOUND';
-                return done(noModelErr)
+                return done(noModelErr, undefined, undefined, finalCb);
             }
 
             answer = ctx.result;
