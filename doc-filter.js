@@ -96,7 +96,10 @@ function filterResult(ctx, mixinOptions, finalCb) {
     // Check for userId
     var userId;
     if(!ctx.req || !ctx.req.accessToken || !ctx.req.accessToken.userId) {
-        return done(undefined, ctx, answer, finalCb);
+        var noModelErr = new Error('unable to find model');
+        noModelErr.statusCode = 404;
+        noModelErr.code = 'MODEL_NOT_FOUND';
+        return done(noModelErr, ctx, answer, finalCb);
     }
     userId = ctx.req.accessToken.userId;
 
@@ -118,7 +121,6 @@ function filterResult(ctx, mixinOptions, finalCb) {
             return done(undefined, ctx, answer, finalCb);
         }
     );
-
 }
 
 function done(err, ctx, answer, finalCb) {
