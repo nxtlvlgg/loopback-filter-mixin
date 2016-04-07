@@ -8,14 +8,14 @@ var packageJSON = require("./package");
 function filterFields(Model, mixinOptions, ctx, modelInstance) {
     return function(finalCb) {
 
-        // Get the parent model
-        var modelName = ctx.methodString.split(".")[0];
-
         // See if we're fulfilling a relation request and get the associated model
+        var modelName = Model.definition.name;
         var methodArr = ctx.methodString.split("__");
         if (methodArr.length > 1) {
             var relationName = methodArr[methodArr.length - 1];
-            modelName = Model.app.models[modelName].settings.relations[relationName].model;
+            var relationConfig = Model.settings.relations[relationName]
+                || Model.relations[relationName];
+            modelName = relationConfig.model
         }
         Model = Model.app.models[modelName];
 
