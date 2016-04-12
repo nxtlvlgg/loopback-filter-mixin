@@ -14,7 +14,7 @@ module.exports = function(Model, mixinOptions) {
     Model.beforeRemote('**', function(ctx, modelInstance, next) {
         return async.series([
             skip.skipFilter(ctx, methodsToSkip),
-            predicate.addPredicateFields(mixinOptions, ctx)
+            predicate.addPredicateFields(Model, mixinOptions, ctx)
         ], function(err) {
             return (err && err !== true) ? next(err) : next();
         });

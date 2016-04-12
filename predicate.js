@@ -1,7 +1,8 @@
 var predicates = require("./predicates");
+var utils = require("xloop").utils;
 
 
-function addPredicateFields(mixinOptions, ctx) {
+function addPredicateFields(Model, mixinOptions, ctx) {
     return function(finalCb) {
 
         // Check for valid acceptedRoles and predicate
@@ -9,10 +10,22 @@ function addPredicateFields(mixinOptions, ctx) {
             return finalCb();
         }
 
+        // Does the client request include a filter
+        if(!ctx.args.filter) {
+            return finalCb();
+        }
         var filter = JSON.parse(ctx.args.filter);
 
         // is the user limiting the fields?
         if(!filter.fields) {
+            return finalCb();
+        }
+
+        Model = utils.getModelFromRemoteMethod(Model, ctx.methodString);
+
+        // Check for the mixin key in the model's settings
+        mixinOptions = Model.definition.settings.mixins[packageJSON.mixinName];
+        if (typeof mixinOptions !== "object") {
             return finalCb();
         }
 

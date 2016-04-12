@@ -18,14 +18,13 @@ function getMethodsToSkip(Model, mixinOptions) {
     if(Array.isArray(mixinOptions.skipRemotes)) {
         methodsToSkip = methodsToSkip.concat(mixinOptions.skipRemotes);
     }
-
     return methodsToSkip;
 }
 
 
 function skipFilter(ctx, methodsToSkip) {
     return function(finalCb) {
-        var shouldSkipFilter = (methodsToSkip.indexOf(ctx.methodString) !== -1)
+        var shouldSkipFilter = (methodsToSkip.indexOf(ctx.method.name) !== -1)
             ? true : undefined;
         return finalCb(shouldSkipFilter);
     }
