@@ -11,7 +11,7 @@ function filterFields(Model, mixinOptions, ctx, modelInstance) {
     return function(finalCb) {
 
 
-        Model = utils.getModelFromRemoteMethod(Model, ctx.methodString);
+        Model = utils.getModelFromRemoteMethod(Model, ctx.method.name);
 
         // Check for the mixin key in the model's settings
         mixinOptions = Model.definition.settings.mixins[packageJSON.mixinName];

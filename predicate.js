@@ -1,4 +1,5 @@
 var predicates = require("./predicates");
+var packageJSON = require("./package");
 var utils = require("xloop").utils;
 
 
@@ -21,7 +22,7 @@ function addPredicateFields(Model, mixinOptions, ctx) {
             return finalCb();
         }
 
-        Model = utils.getModelFromRemoteMethod(Model, ctx.methodString);
+        Model = utils.getModelFromRemoteMethod(Model, ctx.method.name);
 
         // Check for the mixin key in the model's settings
         mixinOptions = Model.definition.settings.mixins[packageJSON.mixinName];
@@ -31,31 +32,44 @@ function addPredicateFields(Model, mixinOptions, ctx) {
 
         // Append any required fields to the query
         var predicate = predicates[mixinOptions.predicate];
-        if(typeof predicate === "function" && Array.isArray(mixinOptions.requiredFields)) {
+        if(typeof predicate !== "function"
+            || !Array.isArray(mixinOptions.requiredFields)
+            || mixinOptions.requiredFields.length < 1) {
+            return finalCb();
+        }
 
-            if(!Array.isArray(ctx.req.dirtyFields)) {
-                ctx.req.dirtyFields = [];
-            }
+        if(!Array.isArray(ctx.req.dirtyFields)) {
+            ctx.req.dirtyFields = [];
+        }
 
-            var requiredField;
-            for(var key in mixinOptions.requiredFields) {
-                requiredField = mixinOptions.requiredFields[key];
-
-                // Inject field into array
-                if(Array.isArray(filter.fields)) {
-                    var queryIndex = ctx.query.fields.indexOf(requiredField);
-                    if(queryIndex === -1) {
-                        filter.fields.push(requiredField);
+        var requiredField;
+        for(var key in mixinOptions.requiredFields) {
+            requiredField = mixinOptions.requiredFields[key];
 
 
-                        ctx.req.dirtyFields.push(requiredField);
-                    }
+            // Inject field into array
+            if(Array.isArray(filter.fields) && filter.fields.length > 0) {
 
-                    // Inject field into object
-                } else if(typeof filter.fields === "object") {
-                    if(!filter.fields[requiredField]) {
-                        filter.fields[requiredField] = true;
-                    }
+                var queryIndex = ctx.query.fields.indexOf(requiredField);
+                if(queryIndex === -1) {
+                    filter.fields.push(requiredField);
+
+
+                    ctx.req.dirtyFields.push(requiredField);
+                }
+
+                // Inject field into object
+            } else if(typeof filter.fields === "object" && Object.keys(filter.fields)) {
+
+                // Are we using negative fields and is the our field included
+                var firstKey = Object.keys(filter.fields)[0];
+                var firstElement = filter.fields[firstKey];
+                if(firstElement === false
+                    && filter.fields[requiredField] !== undefined) {
+                    delete filter.fields[requiredField];
+                } else if(firstElement === true
+                    && !filter.fields[requiredField]) {
+                    filter.fields[requiredField] = true;
                 }
             }
         }

@@ -7,7 +7,7 @@ var utils = require("xloop").utils;
 function filterDocs(Model, mixinOptions, ctx, modelInstance) {
     return function(finalCb) {
 
-        ctx.Model = utils.getModelFromRemoteMethod(Model, ctx.methodString);
+        ctx.Model = utils.getModelFromRemoteMethod(Model, ctx.method.name);
 
         // Check for the mixin key in the model's settings
         mixinOptions = ctx.Model.definition.settings.mixins[packageJSON.mixinName];
