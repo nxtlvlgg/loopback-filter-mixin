@@ -9,8 +9,10 @@ function addPredicateFields(mixinOptions, ctx) {
             return finalCb();
         }
 
+        var filter = JSON.parse(ctx.args.filter);
+
         // is the user limiting the fields?
-        if(!Array.isArray(ctx.query.fields)) {
+        if(!filter.fields) {
             return finalCb();
         }
 
@@ -18,20 +20,34 @@ function addPredicateFields(mixinOptions, ctx) {
         var predicate = predicates[mixinOptions.predicate];
         if(typeof predicate === "function" && Array.isArray(mixinOptions.requiredFields)) {
 
+            if(!Array.isArray(ctx.req.dirtyFields)) {
+                ctx.req.dirtyFields = [];
+            }
+
             var requiredField;
             for(var key in mixinOptions.requiredFields) {
                 requiredField = mixinOptions.requiredFields[key];
-                var queryIndex = ctx.query.fields.indexOf(requiredField);
-                if(queryIndex === -1) {
-                    ctx.query.fields.push(requiredField);
 
-                    if(!Array.isArray(ctx.req.dirtyFields)) {
-                        ctx.req.dirtyFields = [];
+                // Inject field into array
+                if(Array.isArray(filter.fields)) {
+                    var queryIndex = ctx.query.fields.indexOf(requiredField);
+                    if(queryIndex === -1) {
+                        filter.fields.push(requiredField);
+
+
+                        ctx.req.dirtyFields.push(requiredField);
                     }
-                    ctx.req.dirtyFields.push(requiredField);
+
+                    // Inject field into object
+                } else if(typeof filter.fields === "object") {
+                    if(!filter.fields[requiredField]) {
+                        filter.fields[requiredField] = true;
+                    }
                 }
             }
         }
+
+        ctx.args.filter = JSON.stringify(filter);
 
         return finalCb();
     }

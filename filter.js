@@ -12,8 +12,6 @@ module.exports = function(Model, mixinOptions) {
 
     // Ensure the request object on every type of hook
     Model.beforeRemote('**', function(ctx, modelInstance, next) {
-        console.log("method args", ctx.args);
-        return next();
         return async.series([
             skip.skipFilter(ctx, methodsToSkip),
             predicate.addPredicateFields(mixinOptions, ctx)
@@ -25,10 +23,6 @@ module.exports = function(Model, mixinOptions) {
 
     // Run the filter middleware on after every remote request
     Model.afterRemote("**", function (ctx, modelInstance, next) {
-        console.log("after remote keys", Object.keys(ctx));
-        console.log("method string", ctx.methodString);
-        console.log("method keys", Object.keys(ctx.method));
-        return next();
         return async.series([
             skip.skipFilter(ctx, methodsToSkip),
             docFilter(Model, mixinOptions, ctx, modelInstance),
