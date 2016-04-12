@@ -50,26 +50,29 @@ function addPredicateFields(Model, mixinOptions, ctx) {
             // Inject field into array
             if(Array.isArray(filter.fields) && filter.fields.length > 0) {
 
-                var queryIndex = ctx.query.fields.indexOf(requiredField);
+                var queryIndex = filter.fields.indexOf(requiredField);
                 if(queryIndex === -1) {
                     filter.fields.push(requiredField);
-
 
                     ctx.req.dirtyFields.push(requiredField);
                 }
 
                 // Inject field into object
-            } else if(typeof filter.fields === "object" && Object.keys(filter.fields)) {
+            } else if(typeof filter.fields === "object" && Object.keys(filter.fields).length > 0) {
 
                 // Are we using negative fields and is the our field included
                 var firstKey = Object.keys(filter.fields)[0];
                 var firstElement = filter.fields[firstKey];
                 if(firstElement === false
                     && filter.fields[requiredField] !== undefined) {
+
                     delete filter.fields[requiredField];
+                    ctx.req.dirtyFields.push(requiredField);
                 } else if(firstElement === true
                     && !filter.fields[requiredField]) {
+
                     filter.fields[requiredField] = true;
+                    ctx.req.dirtyFields.push(requiredField);
                 }
             }
         }
@@ -127,13 +130,13 @@ function cleanPredicateFields(ctx, modelInstance) {
 
 function isDirty(ctx, filter, key) {
     if((Array.isArray(filter.fields) && filter.fields.length > 0)
-        && (filter.fields.indexOf(key) === -1 && ctx.req.dirtyFields.indexOf(key) !== -1)) {
+        && ctx.req.dirtyFields.indexOf(key) !== -1) {
         return true;
-    } else if((!Array.isArray(filter.fields) && typeof filter.fields === "object" && Object.keys(filter.fields).length > 0)
-        && (filter.fields[key] === false || ctx.req.dirtyFields.indexOf(key) !== -1)) {
+    } else if(!Array.isArray(filter.fields)
+        && typeof filter.fields === "object"
+        && ctx.req.dirtyFields.indexOf(key) !== -1) {
         return true;
     }
-
     return false;
 }
 
