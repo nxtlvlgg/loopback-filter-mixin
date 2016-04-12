@@ -1,26 +1,13 @@
 var async = require("async");
 var packageJSON = require("./package");
 var predicates = require("./predicates");
+var utils = require("xloop").utils;
 
 
 function filterDocs(Model, mixinOptions, ctx, modelInstance) {
     return function(finalCb) {
 
-        // Check if we should skip filtering
-        if(ctx.method.skipFilter) {
-            return finalCb();
-        }
-
-        // See if we're fulfilling a relation request and get the associated model
-        var modelName = Model.definition.name;
-        var methodArr = ctx.methodString.split("__");
-        if (methodArr.length > 1) {
-            var relationName = methodArr[methodArr.length - 1];
-            var relationConfig = Model.settings.relations[relationName]
-                || Model.relations[relationName];
-            modelName = relationConfig.model
-        }
-        ctx.Model = Model.app.models[modelName];
+        ctx.Model = utils.getModelFromRemoteMethod(Model, ctx.methodString);
 
         // Check for the mixin key in the model's settings
         mixinOptions = ctx.Model.definition.settings.mixins[packageJSON.mixinName];
