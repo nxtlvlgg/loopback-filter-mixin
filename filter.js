@@ -11,7 +11,7 @@ module.exports = function(Model, mixinOptions) {
 
 
     // Ensure the request object on every type of hook
-    Model.beforeRemote('**', function(ctx, modelInstance, next) {
+    Model.beforeRemote("find", function(ctx, modelInstance, next) {
         return async.series([
             skip.skipFilter(ctx, methodsToSkip),
             predicate.addPredicateFields(Model, mixinOptions, ctx)
@@ -22,7 +22,7 @@ module.exports = function(Model, mixinOptions) {
 
 
     // Run the filter middleware on after every remote request
-    Model.afterRemote("**", function (ctx, modelInstance, next) {
+    Model.afterRemote("find", function (ctx, modelInstance, next) {
         return async.series([
             skip.skipFilter(ctx, methodsToSkip),
             docFilter(Model, mixinOptions, ctx, modelInstance),
