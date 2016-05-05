@@ -62,7 +62,10 @@ function filterResults(ctx, mixinOptions, finalCb) {
             function (err, isInRoles) {
                 if(err) return resultCb(err);
                 if(!isInRoles.none) {
-                    answer.push(result);
+                    // don't allow duplicate results for double matches
+                    if (answer.indexOf(result) === -1) {
+                        answer.push(result);
+                    }
                 }
                 return resultCb();
             }
